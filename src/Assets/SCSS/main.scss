@@ -1,0 +1,33 @@
+/* You can add global styles to this file, and also import other style files */
+:root {
+    // main color
+    --purple-1: #f9f0ff;
+    --purple-2: #efdbff;
+    --purple-3: #d3adf7;
+    --purple-4: #b37feb;
+    --purple-5: #9254de;
+    --purple-6: #722ed1;
+    --purple-7: #531dab;
+    --purple-8: #391085;
+    --purple-9: #22075e;
+    --purple-10: #120338;
+
+
+    //text
+
+    //font
+    --font-main: 'roboto';
+}
+
+body {
+    font-family: var(--font-main);
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1.3;
+    color: var(--color-text);
+}
+
+html {
+    background-color: var(--purple-1);
+}
