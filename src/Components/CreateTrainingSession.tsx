@@ -1,4 +1,4 @@
-import AddIcon from "@mui/icons-material/Add";
+import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 import Button from "@mui/material/Button/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions/DialogActions";
@@ -64,7 +64,7 @@ const CreateTrainingSession: React.FC<CreateTrainingSessionProps> = ({
         aria-label="add training session"
         onClick={handleOpenDialog}
       >
-        <AddIcon />
+        <AddCircleRoundedIcon />
       </IconButton>
       <Dialog
         open={openDialog}
