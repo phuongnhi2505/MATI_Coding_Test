@@ -1,9 +1,9 @@
 import { configureStore  } from "@reduxjs/toolkit"
-import trainingSessionReducer from '../Pages/TrainingSessions/TrainingSessionSlice'
+import dateOfWeekReducer from '../Pages/Board/DateOfWeekBoardSlice'
 
 export const store = configureStore({
     reducer: {
-      trainingSession: trainingSessionReducer,
+      dateOfWeek: dateOfWeekReducer,
     },
   })
   

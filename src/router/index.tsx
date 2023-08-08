@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import HomeComponent from "../Pages/Home";
 import NotFound from "../Pages/NotFound";
-import TrainingSessions from "../Pages/TrainingSessions";
+import TrainingSessions from "../Pages/Board";
 const router = createBrowserRouter([
     {
       path: "/",
