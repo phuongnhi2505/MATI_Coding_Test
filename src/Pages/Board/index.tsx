@@ -1,19 +1,18 @@
+import { AppBar, Box, IconButton, Toolbar, Typography } from "@mui/material";
+import HomeIcon from "@mui/icons-material/Home";
 import moment from "moment";
 import {
   DragDropContext,
-  Draggable,
   DraggableLocation,
   DropResult,
   Droppable,
-  DroppableProvided,
 } from "react-beautiful-dnd";
+import ClassContainer from "../../Components/ClassContainer";
 import CreateClass from "../../Components/CreateClass";
 import { useAppDispatch, useAppSelector } from "../../Store/hook";
 import { RootState } from "../../Store/store";
-import { updateClass } from "./DateOfWeekBoardSlice";
-import CreateExercise from "../../Components/CreateExercise";
-import ExerciseContainer from "../../Components/ExerciseContainer";
-import { Box, Typography } from "@mui/material";
+import { updateClass, updateExercise } from "./DateOfWeekBoardSlice";
+import { Link, redirect } from "react-router-dom";
 export type Exercise = {
   name: string;
   sets: number | null;
@@ -52,155 +51,129 @@ const Board = () => {
     if (!destination) {
       return;
     }
-    if (destination.droppableId !== source.droppableId) {
-      moveClasses(source, destination);
+    switch (result.type) {
+      case "COLUMN":
+        handleClassDragEnd(source, destination);
+        break;
+
+      default:
+        handleExerciseDragEnd(source, destination);
+        break;
     }
     if (
       destination.droppableId === source.droppableId &&
       destination.index === source.index
     ) {
-      return;
+      return
     }
+    return
+  };
+  const handleClassDragEnd = (
+    source: DraggableLocation,
+    dest: DraggableLocation
+  ) => {
+    // if (dest.droppableId !== source.droppableId) {
+      dispatch(updateClass({ source, dest }));
+    // }
+  };
+  const handleExerciseDragEnd = (
+    source: DraggableLocation,
+    dest: DraggableLocation
+  ) => {
+    // if (dest.droppableId !== source.droppableId) {
+      dispatch(updateExercise({ source, dest }));
+    // }
   };
 
-  const moveClasses = (source: DraggableLocation, dest: DraggableLocation) => {
-    dispatch(updateClass({ source, dest }));
-  };
-
-  const WeekViews = (date: DateOfWeek) => {
-    return date.classes.map((item, classIndex) => {
-      return (
-        <Draggable
-          key={`class_${date.id}_${classIndex}`}
-          draggableId={`class_${date.id}_${classIndex}`}
-          index={classIndex}
-        >
-          {(provided, snapshot) => {
-            return (
-              <div
-                ref={provided.innerRef}
-                {...provided.draggableProps}
-                {...provided.draggableProps}
-                {...provided.dragHandleProps}
-                style={{
-                  userSelect: "none",
-                  padding: 16,
-                  margin: "0 0 8px 0",
-                  minHeight: "50px",
-                  backgroundColor: snapshot.isDragging ? "green" : "olive",
-                  color: "white",
-                  ...provided.draggableProps.style,
-                }}
-              >
-                {item.title}
-                <Droppable
-                  droppableId={`exercise_${date.id}_${classIndex}`}
-                  isDropDisabled={false}
-                  ignoreContainerClipping={false}
-                  isCombineEnabled={false}
-                  renderClone={undefined}
-                >
-                  {(exerciseDroppableProvided, exerciseSnapshot) => (
-                    <div
-                      {...exerciseDroppableProvided.droppableProps}
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        paddingBottom: 0,
-                        transition:
-                          "background-color 0.2s ease, opacity 0.1s ease",
-                        userSelect: "none",
-                        width: "250px",
-                      }}
-                    >
-                      <div
-                        style={{
-                          overflowX: "hidden",
-                          overflowY: "auto",
-                          maxHeight: "250px",
-                        }}
-                      >
-                        <div
-                          style={{ minHeight: "100px", paddingBottom: 1 }}
-                          ref={exerciseDroppableProvided.innerRef}
-                        >
-                          {item.exercise.map((exercise, index) => (
-                            <ExerciseContainer
-                              dateOfWeekId={date.id}
-                              classIndex={classIndex}
-                              exercise={exercise}
-                              exerciseIndex={index}
-                            />
-                          ))}
-                          {exerciseDroppableProvided.placeholder}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </Droppable>
-                <CreateExercise
-                  dateIndex={date.index}
-                  classIndex={classIndex}
-                ></CreateExercise>
-              </div>
-            );
-          }}
-        </Draggable>
-      );
-    });
-  };
   return (
-    <div>
-      <h1 style={{ textAlign: "center" }}>MATI</h1>
-      <div style={{ display: "flex", height: "100%", width: "100%" }}>
+    <>
+      <Box sx={{ flexGrow: 1, marginBottom: 2 }}>
+        <AppBar position="static" color="primary">
+          <Toolbar>
+          
+
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              Training Session Board
+            </Typography>
+            <Typography variant="h6" component="div" sx={{ flexGrow: -1 }}>
+              Phan Thi Huynh Nhu
+            </Typography>
+          </Toolbar>
+        </AppBar>
+      </Box>
+      <Box sx={{ display: "flex", height: "calc(100vh-70px)", width: "100%" }}>
         <DragDropContext onDragEnd={onDragEnd}>
-          {datesOfWeekBoardData.dateOfWeek.map((item, index) => {
+          {datesOfWeekBoardData.dateOfWeek.map((dateItem, dateIndex) => {
             return (
-              <div
-                key={`date_${item.id}`}
-                style={{
+              <Box
+                key={`date_${dateItem.id}`}
+                sx={{
                   display: "flex",
                   flexDirection: "column",
-                  alignItems: "start",
                 }}
               >
-                <h4 style={{ marginBottom: 0, marginLeft: "8px" }}>
-                  {item.title}
-                </h4>
-                <div style={{ margin: 8 }}>
+                <Typography
+                  variant="h6"
+                  style={{ marginBottom: 0, marginLeft: "8px" }}
+                >
+                  {dateItem.title}
+                </Typography>
+                <Box sx={{ margin: 1 }}>
                   <Droppable
                     type="COLUMN"
-                    droppableId={`date_${item.id}`}
+                    droppableId={`${dateItem.id}_${dateIndex}`}
                     ignoreContainerClipping={false}
                     isCombineEnabled={false}
                   >
                     {(provided, snapshot) => (
-                      <div
+                      <Box
                         {...provided.droppableProps}
                         ref={provided.innerRef}
-                        style={{
+                        sx={{
                           background: snapshot.isDraggingOver
                             ? "lightblue"
-                            : "lightgrey",
-                          padding: 4,
-                          width: 250,
-                          minHeight: 500,
+                            : "var(--bg-default)",
+                          padding: 1,
+                          width: "235px",
+                          height: "calc(100vh - 170px)",
                         }}
                       >
-                        <h4>{item.date.substring(0, 2)}</h4>
-                        {WeekViews(item)}
-                        {provided.placeholder}
-                        <CreateClass {...item}></CreateClass>
-                      </div>
+                        <Box sx={{ position: "relative", marginBottom: 2 }}>
+                          <Typography
+                            variant="h6"
+                            sx={{ position: "absolute", left: 0 }}
+                          >
+                            {dateItem.date.substring(0, 2)}
+                          </Typography>
+                          <CreateClass {...dateItem}></CreateClass>
+                        </Box>
+                        <Box
+                          sx={{
+                            maxHeight: "calc(100vh - 250px)",
+                            overflowY: "auto",
+                          }}
+                        >
+                          {dateItem.classes.map((classItem, classIndex) => (
+                            <ClassContainer
+                              key={`date_${dateIndex}_class_${classIndex}`}
+                              dateId={dateItem.id}
+                              dateIndex={dateIndex}
+                              classIndex={classIndex}
+                              classData={classItem}
+                            />
+                          ))}
+                          {provided.placeholder}
+                        </Box>
+                      </Box>
                     )}
                   </Droppable>
-                </div>
-              </div>
+                </Box>
+              </Box>
             );
           })}
         </DragDropContext>
-      </div>
-    </div>
+      </Box>
+    </>
   );
 };
 

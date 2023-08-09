@@ -65,6 +65,7 @@ const CreateClass: React.FC<DateOfWeek> = ({
         color="secondary"
         aria-label="add training session"
         onClick={handleOpenDialog}
+        sx={{padding: 0}}
       >
         <AddCircleRoundedIcon />
       </IconButton>

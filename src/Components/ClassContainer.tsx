@@ -1,144 +1,96 @@
-import {
-  Box,
-  Card,
-  CardActions,
-  CardContent,
-  CardHeader,
-  Container,
-} from "@mui/material";
-import { Draggable, Droppable, DroppableProvided } from "react-beautiful-dnd";
-import { ClassInformation, DateOfWeek } from "../Pages/Board";
-import CreateTrainingSession from "./CreateClass";
-import { ReactNode } from "react";
-const ClassContainer: React.FC<DateOfWeek> = (props) => {
-  const getRenderItem =
-    (x: any) => (provided: any, snapshot: any, rubric: any) => {
-      return (
-        <div
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          ref={provided.innerRef}
-        >
-          <Card
-            sx={{
-              boxShadow: "none",
-              backgroundColor: "var(--purple-3)",
-            }}
-          >
-            <CardHeader
-              title={x.title}
-              sx={{ color: "var(--purple-6)", whiteSpace: "nowrap" }}
-            ></CardHeader>
-            <CardContent>
-              {x.exercise.map((item: any, idx: number) => (
-                <Card variant="outlined" key={idx}>
-                  <CardHeader
-                    sx={{ textAlign: "end" }}
-                    title={item.title}
-                  ></CardHeader>
-                  <CardContent>
-                    <div style={{ position: "relative" }}>
-                      <span
-                        style={{
-                          top: 0,
-                          left: 0,
-                          position: "absolute",
-                        }}
-                      >
-                        {item.number}
-                      </span>
-                      <span
-                        style={{
-                          top: 0,
-                          right: 0,
-                          position: "absolute",
-                        }}
-                      >
-                        {item.works}
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
-      );
-    };
+import { Draggable, Droppable } from "react-beautiful-dnd";
+import { ClassInformation } from "../Pages/Board";
+import CreateExercise from "./CreateExercise";
+import ExerciseContainer from "./ExerciseContainer";
+import { Box, Card, CardContent, CardHeader, Typography } from "@mui/material";
 
+interface ClassContainerProps {
+  dateId: string,
+  dateIndex: number,
+  classIndex: number,
+  classData: ClassInformation,
+}
+const ClassContainer: React.FC<ClassContainerProps> = ({
+  dateId,
+  dateIndex,
+  classIndex,
+  classData,
+}) => {
   return (
-    <Box sx={{ minHeight: "100vh" }}>
-      {props.classes.map((x, i) => {
-        return (
-          <Draggable
-            key={props.id}
-            index={props.index}
-            draggableId={props.index.toString()}
-          >
-            {(draggableProvided, draggableSnapshot) => (
+    <Draggable
+          key={`date_${dateId}_class_${classIndex}_${classIndex}`}
+          draggableId={`class_${dateId}_${classIndex}`}
+          index={classIndex}
+        >
+          {(provided, snapshot) => {
+            return (
               <Card
-                sx={{
-                  boxShadow: "none",
-                }}
+                ref={provided.innerRef}
+                {...provided.draggableProps}
+                {...provided.draggableProps}
+                {...provided.dragHandleProps}
                 variant="outlined"
-                ref={draggableProvided.innerRef}
-                {...draggableProvided.draggableProps}
-                {...draggableProvided.dragHandleProps}
+                sx={{
+                  padding: 1,
+                  minHeight: "50px",
+                  backgroundColor: snapshot.isDragging
+                    ? "var(--purple-3)"
+                    : null,
+                }}
               >
-                <CardHeader
-                  title={x.title}
-                  sx={{
-                    color: "var(--purple-6)",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                ></CardHeader>
-                <CardContent>
-                  {x.exercise.map((item, idx) => (
-                    <Card
-                      variant="outlined"
-                      ref={draggableProvided.innerRef}
-                      {...draggableProvided.draggableProps}
-                      {...draggableProvided.dragHandleProps}
-                      key={`class_${props.id}_${i}_${idx}`}
-                    >
-                      <CardHeader
-                        sx={{ textAlign: "end" }}
-                        title={item.name}
-                      ></CardHeader>
-                      <CardContent>
-                        {/* <div style={{ position: "relative" }}>
-                        <span
-                          style={{
-                            top: 0,
-                            left: 0,
-                            position: "absolute",
-                          }}
+                <Typography variant="h6" noWrap sx={{ padding: 0}}>{classData.title}</Typography>
+                <CardContent sx={{ padding: 0 }}>
+                  <Droppable
+                    droppableId={`date_${dateIndex}_class_${classIndex}`}
+                    isDropDisabled={false}
+                    ignoreContainerClipping={false}
+                    isCombineEnabled={false}
+                    renderClone={undefined}
+                  >
+                    {(exerciseDroppableProvided, exerciseSnapshot) => (
+                      <Box
+                        {...exerciseDroppableProvided.droppableProps}
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          paddingBottom: 0,
+                          transition:
+                            "background-color 0.2s ease, opacity 0.1s ease",
+                          userSelect: "none",
+                          background: exerciseSnapshot.isDraggingOver
+                            ? "lightblue"
+                            : null,
+                        }}
+                      >
+                        <Box
+                          sx={{ minHeight: "100px" }}
+                          ref={exerciseDroppableProvided.innerRef}
                         >
-                          {item.number}
-                        </span>
-                        <span
-                          style={{
-                            top: 0,
-                            right: 0,
-                            position: "absolute",
-                          }}
-                        >
-                          {item.works}
-                        </span>
-                      </div> */}
-                        jfjhjádjka
-                      </CardContent>
-                    </Card>
-                  ))}
+                          {classData.exercise.map((exercise, index) => (
+                            <ExerciseContainer
+                              key={`date_${dateIndex}_class${classIndex}_exercise_${index}`}
+                              dateOfWeekId={dateId}
+                              classIndex={classIndex}
+                              exercise={exercise}
+                              exerciseIndex={index}
+                            />
+                          ))}
+                          {exerciseDroppableProvided.placeholder}
+                        </Box>
+                      </Box>
+                    )}
+                  </Droppable>
                 </CardContent>
+                {!snapshot.isDragging ? (
+                  <CreateExercise
+                    dateIndex={dateIndex}
+                    classIndex={classIndex}
+                  />
+                ) : null}
               </Card>
-            )}
-          </Draggable>
-        );
-      })}
-    </Box>
+            );
+          }}
+        </Draggable>
   );
 };
 
