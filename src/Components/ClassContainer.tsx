@@ -36,9 +36,12 @@ const ClassContainer: React.FC<ClassContainerProps> = ({
                   backgroundColor: snapshot.isDragging
                     ? "var(--purple-3)"
                     : null,
+                    marginBottom: 1
                 }}
               >
-                <Typography variant="h6" noWrap sx={{ padding: 0}}>{classData.title}</Typography>
+                <Typography variant="h6" noWrap sx={{ padding: 0, color: 'var(--purple-5)'}}>
+                  {classData.title}
+                </Typography>
                 <CardContent sx={{ padding: 0 }}>
                   <Droppable
                     droppableId={`date_${dateIndex}_class_${classIndex}`}

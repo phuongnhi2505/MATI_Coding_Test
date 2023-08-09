@@ -68,9 +68,16 @@ export const dateOfWeekBoardSlice = createSlice({
       const {source, dest} = action.payload;
       const sourceDroppableId = Number(source.droppableId.split("_")[1]);
       const destDroppableId = Number(dest.droppableId.split("_")[1]);
-      const sourceClassItem = state[sourceDroppableId].classes[source.index];
-      state[destDroppableId].classes.splice(dest.index, 0, sourceClassItem);
-      state[sourceDroppableId].classes.splice(source.index, 1);
+      if(sourceDroppableId === destDroppableId){
+        const tempItem = {...state[destDroppableId].classes[dest.index]};
+        const sourceItem = {...state[sourceDroppableId].classes[source.index]}
+        state[destDroppableId].classes[dest.index] = sourceItem;
+        state[sourceDroppableId].classes[source.index] = tempItem;
+      } else {
+        const sourceClassItem = {...state[sourceDroppableId].classes[source.index]};
+        state[destDroppableId].classes.splice(dest.index, 0, sourceClassItem);
+        state[sourceDroppableId].classes.splice(source.index, 1);
+      }
       setLocalStorage("DateOfWeek", state);
     },
     creatExercise: (state, action: PayloadAction<{dateIndex: number, classIndex: number, exercise: Exercise}>)=> {  
@@ -86,11 +93,18 @@ export const dateOfWeekBoardSlice = createSlice({
       }>
     ) => {
       const { source, dest } = action.payload;
-      const [dateOfSoureIndex, sourceClassIndex] = convertArrayStringToNumber(source.droppableId.split("_"))   
-      const [dateOfDestIndex, destClassIndex] = convertArrayStringToNumber(dest.droppableId.split("_"))
-      const sourceExercise = state[dateOfSoureIndex].classes[sourceClassIndex].exercise[source.index];
-      state[dateOfDestIndex].classes[destClassIndex].exercise.splice(dest.index, 0, sourceExercise);
-      state[dateOfSoureIndex].classes[sourceClassIndex].exercise.splice(source.index, 1);
+      const [dateOfSoureIndex, sourceClassIndex] = convertArrayStringToNumber(source.droppableId.split("_"));
+      const [dateOfDestIndex, destClassIndex] = convertArrayStringToNumber(dest.droppableId.split("_"));
+      if(dateOfSoureIndex === dateOfDestIndex && sourceClassIndex === destClassIndex){
+        const tempItem = {...state[dateOfDestIndex].classes[destClassIndex].exercise[dest.index]};
+        const sourceItem = {...state[dateOfSoureIndex].classes[sourceClassIndex].exercise[source.index]}
+        state[dateOfDestIndex].classes[destClassIndex].exercise[dest.index] = sourceItem;
+        state[dateOfSoureIndex].classes[sourceClassIndex].exercise[source.index] = tempItem;
+      } else {
+        const sourceExercise = state[dateOfSoureIndex].classes[sourceClassIndex].exercise[source.index];
+        state[dateOfDestIndex].classes[destClassIndex].exercise.splice(dest.index, 0, sourceExercise);
+        state[dateOfSoureIndex].classes[sourceClassIndex].exercise.splice(source.index, 1);
+      }
       setLocalStorage("DateOfWeek", state);
     },
   },

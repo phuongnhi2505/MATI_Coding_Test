@@ -69,7 +69,7 @@ const CreateExercise: React.FC<CreateExerciseProps> = ({dateIndex, classIndex}) 
           fullWidth
         >
           <DialogTitle id="alert-dialog-title" textAlign={"center"}>
-            {"Create Training Session"}
+            {"Create Exercise"}
           </DialogTitle>
           <DialogContent dividers>
             <TextField

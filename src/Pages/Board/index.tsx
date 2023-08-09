@@ -13,6 +13,7 @@ import { useAppDispatch, useAppSelector } from "../../Store/hook";
 import { RootState } from "../../Store/store";
 import { updateClass, updateExercise } from "./DateOfWeekBoardSlice";
 import { Link, redirect } from "react-router-dom";
+import { useState } from "react";
 export type Exercise = {
   name: string;
   sets: number | null;
@@ -44,8 +45,6 @@ const Board = () => {
     return moment(new Date()).format("DD/MM/YYYY") === date;
   };
   const onDragEnd = (result: DropResult) => {
-    console.log(result);
-
     const source = result.source;
     const destination = result.destination;
     if (!destination) {
@@ -72,17 +71,13 @@ const Board = () => {
     source: DraggableLocation,
     dest: DraggableLocation
   ) => {
-    // if (dest.droppableId !== source.droppableId) {
       dispatch(updateClass({ source, dest }));
-    // }
   };
   const handleExerciseDragEnd = (
     source: DraggableLocation,
     dest: DraggableLocation
   ) => {
-    // if (dest.droppableId !== source.droppableId) {
       dispatch(updateExercise({ source, dest }));
-    // }
   };
 
   return (
@@ -114,7 +109,7 @@ const Board = () => {
               >
                 <Typography
                   variant="h6"
-                  style={{ marginBottom: 0, marginLeft: "8px" }}
+                  sx={{ marginBottom: 0, marginLeft: "8px", color: 'gray', fontWeight: 'bold'}}
                 >
                   {dateItem.title}
                 </Typography>
@@ -141,7 +136,11 @@ const Board = () => {
                         <Box sx={{ position: "relative", marginBottom: 2 }}>
                           <Typography
                             variant="h6"
-                            sx={{ position: "absolute", left: 0 }}
+                            sx={{ 
+                              position: "absolute", left: 0 ,
+                              fontWeight: 'bold',
+                              color: isCurrentDate(dateItem.date) ? 'var(--purple-5)': 'gray'
+                            }}
                           >
                             {dateItem.date.substring(0, 2)}
                           </Typography>
