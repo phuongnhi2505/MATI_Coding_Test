@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { DateOfWeek } from "./index";
-import { DraggableLocation } from "react-beautiful-dnd";
 import moment from "moment";
+import { DraggableLocation } from "react-beautiful-dnd";
+import { DateOfWeek, Exercise } from "./index";
 
 const initDateOfWeek = (): DateOfWeek[] => {
   return getLocalStorage('DateOfWeek') ?? generationInitState()
@@ -40,13 +40,8 @@ export const dateOfWeekBoardSlice = createSlice({
   name: "dateOfWeek",
   initialState: initDateOfWeek(),
   reducers: {
-    initData: (state, action: PayloadAction<DateOfWeek[]>) => {
-      state = action.payload;
-      setLocalStorage("DateOfWeek", state);
-    },
     createClass: (state, action: PayloadAction<DateOfWeek>) => {
       state[action.payload.index] = action.payload;
-      console.log(66, state.values);
       setLocalStorage("DateOfWeek", state);
     },
     updateClass: (
@@ -56,8 +51,7 @@ export const dateOfWeekBoardSlice = createSlice({
         dest: DraggableLocation;
       }>
     ) => {
-      const source = action.payload.source;
-      const dest = action.payload.dest;
+      const {source, dest} = action.payload;
       const sourceDroppableId = Number(source.droppableId.split("_")[1]);
       const destDroppableId = Number(dest.droppableId.split("_")[1]);
       const sourceClassItem = state[source.index].classes[sourceDroppableId];
@@ -65,8 +59,13 @@ export const dateOfWeekBoardSlice = createSlice({
       state[source.index].classes.splice(sourceDroppableId, 1);
       setLocalStorage("DateOfWeek", state);
     },
+    creatExercise: (state, action: PayloadAction<{dateIndex: number, classIndex: number, exercise: Exercise}>)=> {  
+      const { dateIndex, classIndex, exercise } = action.payload;
+      state[dateIndex].classes[classIndex].exercise.push(exercise);
+      setLocalStorage("DateOfWeek", state);
+    }
   },
 });
 
-export const { createClass, updateClass, initData } = dateOfWeekBoardSlice.actions;
+export const { createClass, updateClass, creatExercise } = dateOfWeekBoardSlice.actions;
 export default dateOfWeekBoardSlice.reducer;
